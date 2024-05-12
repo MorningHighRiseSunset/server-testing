@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Chat</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      #message-log {
+        padding: 20px;
+        border: 1px solid #ccc;
+        height: 300px;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Socket.IO Chat</h1>
+    <div id="message-log"></div>
+    <form action="">
+      <input id="name" placeholder="Enter your name" />
+      <input id="message" autocomplete="off" />
+      <button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(() => {
+        const socket = io('https://your-domain-name.netlify.app');
+
+        // Prompt the user for their name
+        const name = prompt('Enter your name');
+        socket.emit('setName', name);
+
+        $('form').submit(() => {
+          socket.emit('sendMessage', $('#message').val());
+          $('#message').val('');
+          return false;
+        });
+
+        socket.on('receiveMessage', (message) => {
+          $('#message-log').append(`<p>${message}</p>`);
+          $('#message-log').scrollTop($('#message-log')[0].scrollHeight);
+        });
+
+        socket.on('setName', (name) => {
+          // Update the UI to display the user's name
+          $('#name').val(name);
+        });
+      });
+    </script>
+  </body>
+</html>
