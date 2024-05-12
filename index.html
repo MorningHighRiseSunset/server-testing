@@ -1,6 +1,9 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket.IO Chat</title>
     <style>
       body {
@@ -17,8 +20,8 @@
   <body>
     <h1>Socket.IO Chat</h1>
     <div id="message-log"></div>
-    <form action="">
-      <input id="name" placeholder="Enter your name" />
+    <form>
+      <input id="name" placeholder="Enter your name" readonly />
       <input id="message" autocomplete="off" />
       <button>Send</button>
     </form>
@@ -27,15 +30,16 @@
     <script>
       $(() => {
         const socket = io('https://multipler-server-testing.netlify.app');
+        let userName = '';
 
         // Prompt the user for their name
-        const name = prompt('Enter your name');
-        socket.emit('setName', name);
+        userName = prompt('Enter your name');
+        socket.emit('setName', userName);
 
-        $('form').submit(() => {
+        $('form').submit((e) => {
+          e.preventDefault();
           socket.emit('sendMessage', $('#message').val());
           $('#message').val('');
-          return false;
         });
 
         socket.on('receiveMessage', (message) => {
@@ -46,6 +50,7 @@
         socket.on('setName', (name) => {
           // Update the UI to display the user's name
           $('#name').val(name);
+          userName = name;
         });
       });
     </script>
